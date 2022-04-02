@@ -20,7 +20,7 @@ class Controller(var service: VaultService) {
             var response = service.writeSecret(secretsName, secret)
             if(Objects.isNull(response))
                 return ResponseEntity(BaseResponse(400, "And error occurred reading"), HttpStatus.INTERNAL_SERVER_ERROR)
-            return ResponseEntity(BaseResponse(201, response.toString()), HttpStatus.OK)
+            return ResponseEntity(BaseResponse(200, response.toString()), HttpStatus.OK)
         } catch (excepion: Exception) {
             return ResponseEntity(BaseResponse(400, excepion.message.toString()), HttpStatus.BAD_REQUEST)
         }

@@ -18,11 +18,14 @@ class VaultService(val config: Config) {
 
     fun writeSecret(name: String, secret: SecretDTO): SecretDTO? {
         val endpoint = VaultEndpoint.create("localhost", 8200)
+        val path = "polito/$name"
         endpoint.scheme = "http"
         val template = VaultTemplate(endpoint, TokenAuthentication(config.token))
-        val path = "polito/$name"
+
         val vaultWriteResponse = template.write(path, secret)
+
         logger.info(vaultWriteResponse.toString())
+
         val response = template.read(path, SecretDTO::class.java)
         return response?.data
     }
