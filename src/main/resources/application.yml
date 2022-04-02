@@ -1,0 +1,6 @@
+config:
+  vault:
+    token: "hvs.EqzW9jLKDpjCMm0aJn992nWU"
+logging:
+    level:
+        root: debug
