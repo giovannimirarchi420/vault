@@ -1,4 +1,4 @@
-package it.polito.vault.VaultProject.dtos
+package it.polito.vault.dtos
 
 data class SecretDTO(var userId: String = "", var password: String = "") {
 }

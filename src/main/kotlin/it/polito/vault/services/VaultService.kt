@@ -1,7 +1,7 @@
-package it.polito.vault.VaultProject.services
+package it.polito.vault.services
 
-import it.polito.vault.VaultProject.dtos.BaseResponse
-import it.polito.vault.VaultProject.dtos.SecretDTO
+import it.polito.vault.dtos.BaseResponse
+import it.polito.vault.dtos.SecretDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

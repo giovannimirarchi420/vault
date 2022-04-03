@@ -1,4 +1,4 @@
-package it.polito.vault.VaultProject
+package it.polito.vault
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package it.polito.vault.VaultProject.dtos
+package it.polito.vault.dtos
 
 class BaseResponse(val error: Boolean, val body: Any?) {
 

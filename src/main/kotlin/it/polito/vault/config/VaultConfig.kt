@@ -1,4 +1,4 @@
-package it.polito.vault.VaultProject.config
+package it.polito.vault.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration

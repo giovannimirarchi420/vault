@@ -1,8 +1,8 @@
-package it.polito.vault.VaultProject.controllers
+package it.polito.vault.controllers
 
-import it.polito.vault.VaultProject.dtos.BaseResponse
-import it.polito.vault.VaultProject.dtos.SecretDTO
-import it.polito.vault.VaultProject.services.VaultService
+import it.polito.vault.dtos.BaseResponse
+import it.polito.vault.dtos.SecretDTO
+import it.polito.vault.services.VaultService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
