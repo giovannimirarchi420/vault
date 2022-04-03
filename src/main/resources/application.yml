@@ -1,0 +1,8 @@
+config:
+  vault:
+    host: "localhost"
+    port: "8200"
+    token: "hvs.EqzW9jLKDpjCMm0aJn992nWU"
+logging:
+    level:
+        root: info
