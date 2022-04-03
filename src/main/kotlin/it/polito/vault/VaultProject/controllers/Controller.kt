@@ -20,7 +20,7 @@ class Controller(var service: VaultService) {
     }
 
     @GetMapping("/get/{pathName}")
-    fun readSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse>?{
+    fun readSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse> {
         val response = service.readSecretWithOperationObject(pathName)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
