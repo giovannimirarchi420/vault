@@ -1,5 +1,5 @@
 package it.polito.vault.VaultProject.dtos
 
-class BaseResponse(val status: Int, val body: String) {
+class BaseResponse(val error: Boolean, val body: Any?) {
 
 }

@@ -19,11 +19,20 @@ class Controller(var service: VaultService) {
         try {
             var response = service.writeSecret(secretsName, secret)
             if(Objects.isNull(response))
-                return ResponseEntity(BaseResponse(400, "And error occurred reading"), HttpStatus.INTERNAL_SERVER_ERROR)
-            return ResponseEntity(BaseResponse(200, response.toString()), HttpStatus.OK)
+                return ResponseEntity(BaseResponse(true, "And error occurred reading"), HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity(BaseResponse(false, response.toString()), HttpStatus.OK)
         } catch (excepion: Exception) {
-            return ResponseEntity(BaseResponse(400, excepion.message.toString()), HttpStatus.BAD_REQUEST)
+            return ResponseEntity(BaseResponse(true, excepion.message.toString()), HttpStatus.BAD_REQUEST)
         }
-        return ResponseEntity(BaseResponse(400, "ERROR"), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(BaseResponse(true, "ERROR"), HttpStatus.BAD_REQUEST)
+    }
+
+    @GetMapping("/get/{pathName}")
+    fun readSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse>?{
+        var response = service.readSecret(pathName)
+        if(Objects.isNull(response)) {
+            return ResponseEntity<BaseResponse>(BaseResponse(true, "No secrets found for this path"), HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity<BaseResponse>(BaseResponse(false, response), HttpStatus.OK)
     }
 }
