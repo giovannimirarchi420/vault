@@ -10,18 +10,25 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class Controller(var service: VaultService) {
 
-    @PostMapping("/add/{secretsName}")
-    fun addSecret(@PathVariable secretsName: String,
+    @PostMapping("/{pathName}")
+    fun addSecret(@PathVariable pathName: String,
                   @RequestBody secret: SecretDTO
     ) : ResponseEntity<BaseResponse> {
-        val response = service.writeSecretWithOperationObject(secretsName, secret)
+        val response = service.writeSecret(pathName, secret)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }
 
-    @GetMapping("/get/{pathName}")
+    @GetMapping("/{pathName}")
     fun readSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse> {
-        val response = service.readSecretWithOperationObject(pathName)
+        val response = service.readSecret(pathName)
+        val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
+        return ResponseEntity(response, status)
+    }
+
+    @DeleteMapping("/{pathName}")
+    fun deleteSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse> {
+        val response = service.deleteSecret(pathName)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }
