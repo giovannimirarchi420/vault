@@ -7,44 +7,42 @@ import it.polito.vault.dtos.SecretDTO
 import it.polito.vault.services.VaultService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.Nullable
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class Controller(var service: VaultService) {
 
-    @PostMapping("/kv/{pathName}")
+    @PostMapping("/kv/{pathName}/{id}")
     fun addSecret(@PathVariable pathName: String,
+                  @PathVariable id: String,
                   @RequestBody secret: SecretDTO
     ) : ResponseEntity<BaseResponse> {
-        val response = service.writeSecret(pathName, secret)
+        val response = service.writeSecret(pathName, id, secret)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }
 
-    @GetMapping("/kv/{pathName}")
-    fun readSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse> {
-        val response = service.readSecret(pathName)
+    @GetMapping("/kv/{pathName}/{userId}")
+    fun readSecret(@PathVariable pathName: String,
+                   @PathVariable userId: String) : ResponseEntity<BaseResponse> {
+        val response = service.readSecret(pathName, userId)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }
 
-    @DeleteMapping("/kv/{pathName}")
-    fun deleteSecret(@PathVariable pathName: String): ResponseEntity<BaseResponse> {
-        val response = service.deleteSecret(pathName)
+    @DeleteMapping("/kv/{pathName}/{id}")
+    fun deleteSecret(@PathVariable pathName: String,
+                     @PathVariable(required = false) id: String): ResponseEntity<BaseResponse> {
+        val response = service.deleteSecret(pathName, id)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }
 
-    @PostMapping("/enable")
-    fun enablePath(@RequestBody request: EnablePathRequestDTO) : ResponseEntity<BaseResponse> {
-        val response = service.createPath(request)
-        val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
-        return ResponseEntity(response, status)
-    }
-
-    @GetMapping("/generate/{pathName}")
-    fun generateKeys(@PathVariable pathName: String) : ResponseEntity<BaseResponse> {
-        val response = service.generateKeys(pathName)
+    @PostMapping("/enable/{pathName}")
+    fun enablePath(@PathVariable pathName: String,
+                   @RequestBody request: EnablePathRequestDTO) : ResponseEntity<BaseResponse> {
+        val response = service.createPath(pathName, request)
         val status = if(response.error) HttpStatus.BAD_REQUEST else HttpStatus.OK
         return ResponseEntity(response, status)
     }

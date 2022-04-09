@@ -8,12 +8,9 @@ import it.polito.vault.dtos.SecretDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.vault.client.VaultEndpoint
 import org.springframework.vault.core.VaultKeyValueOperationsSupport
 import org.springframework.vault.core.VaultOperations
-import org.springframework.vault.core.VaultTemplate
 import org.springframework.vault.core.VaultTokenOperations
-import org.springframework.vault.support.VaultCertificateRequest
 import org.springframework.vault.support.VaultMount
 import org.springframework.vault.support.VaultToken
 import org.springframework.vault.support.VaultTokenRequest
@@ -26,26 +23,27 @@ class VaultService(val vaultOperations: VaultOperations) {
 
     var logger: Logger = LoggerFactory.getLogger(VaultService::class.java)
 
-    fun writeSecret(pathName: String, secret: SecretDTO) : BaseResponse {
-        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
-        try {
+    fun writeSecret(pathName: String, id: String, secret: SecretDTO) : BaseResponse {
+
+        val response : SecretDTO?
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_2)
+        return try {
             logger.info("Attempting to write secret in vault...")
-            keyValueOperations.put(pathName, secret)
+            keyValueOperations.put(id, secret)
+            response = keyValueOperations.get(id, SecretDTO::class.java)?.data
             logger.info("Secret written")
+            BaseResponse(false, response)
         } catch (e: Exception) {
             logger.error("Some error occurred writing a secret")
-            return BaseResponse(true, "Error, secret not created")
+            BaseResponse(true, e.message)
         }
-
-        return BaseResponse(false, "Secret created")
     }
 
-    fun readSecret(pathName: String): BaseResponse {
-        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
-
+    fun readSecret(pathName: String, userId: String): BaseResponse {
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_2)
         try {
             logger.info("Attempting to read secret from vault...")
-            val secret = keyValueOperations.get(pathName, SecretDTO::class.java)?.data
+            val secret = keyValueOperations.get(userId, SecretDTO::class.java)?.data
             if(Objects.isNull(secret)){
                 throw NullPointerException()
             }
@@ -59,27 +57,28 @@ class VaultService(val vaultOperations: VaultOperations) {
         return BaseResponse(true, "No secret found in $pathName")
     }
 
-    fun deleteSecret(pathName: String) : BaseResponse {
-        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
-        try {
-            logger.info("Performing secrets delete request for path $pathName.. ")
-            keyValueOperations.delete(pathName)
-            logger.info("$pathName secrets deleted")
-            return BaseResponse(false, "Deleted")
+    fun deleteSecret(pathName: String, id: String) : BaseResponse {
+
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_2)
+        return try {
+            logger.info("Performing secrets delete request for path $pathName/$id.. ")
+            keyValueOperations.delete(id)
+            logger.info("$pathName/$id secrets deleted")
+            BaseResponse(false, "Deleted")
         } catch (e: Exception) {
-            logger.info("Error, $pathName secrets NOT deleted")
-            return BaseResponse(false, "Error, $pathName secrets NOT deleted")
+            logger.info("Error, $pathName/$id secrets NOT deleted")
+            BaseResponse(false, "Error, $pathName/$id secrets NOT deleted")
         }
     }
 
-    fun createPath(request: EnablePathRequestDTO) : BaseResponse {
+    fun createPath(pathName: String, request: EnablePathRequestDTO) : BaseResponse {
         if(!VaultConstants.secretsTypeList.contains(request.secretsEngineType)){
             return BaseResponse(true, "Secrets engine type not allowed")
         }
         return try {
-            vaultOperations.opsForSys().mount(request.pathName, VaultMount.builder()
+            vaultOperations.opsForSys().mount(pathName, VaultMount.builder()
                 .type(request.secretsEngineType)
-                .description("Polito CA")
+                .description(request.description)
                 .build())
             BaseResponse(false, "OK")
         } catch ( e: java.lang.Exception) {

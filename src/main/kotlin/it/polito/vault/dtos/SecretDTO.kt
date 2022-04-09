@@ -1,4 +1,5 @@
 package it.polito.vault.dtos
 
-data class SecretDTO(var userId: String = "", var password: String = "") {
-}
+import java.util.*
+
+data class SecretDTO(var id: String = UUID.randomUUID().toString(), var password: String = "")
