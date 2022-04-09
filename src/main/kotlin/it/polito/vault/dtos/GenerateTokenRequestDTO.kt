@@ -1,6 +1,5 @@
 package it.polito.vault.dtos
 
-import java.time.Duration
 import java.util.*
 
 data class GenerateTokenRequestDTO(val renewable: Boolean? = null,
