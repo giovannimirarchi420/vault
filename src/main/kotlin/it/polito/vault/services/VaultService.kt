@@ -26,12 +26,11 @@ class VaultService(val vaultOperations: VaultOperations) {
 
     var logger: Logger = LoggerFactory.getLogger(VaultService::class.java)
 
-    fun writeSecret(name: String, secret: SecretDTO) : BaseResponse {
-        val path = "polito/$name"
-        val keyValueOperations = vaultOperations.opsForKeyValue(path, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
+    fun writeSecret(pathName: String, secret: SecretDTO) : BaseResponse {
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
         try {
             logger.info("Attempting to write secret in vault...")
-            keyValueOperations.put(path, secret)
+            keyValueOperations.put(pathName, secret)
             logger.info("Secret written")
         } catch (e: Exception) {
             logger.error("Some error occurred writing a secret")
@@ -42,12 +41,11 @@ class VaultService(val vaultOperations: VaultOperations) {
     }
 
     fun readSecret(pathName: String): BaseResponse {
-        val path = "polito/$pathName"
-        val keyValueOperations = vaultOperations.opsForKeyValue(path, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
 
         try {
             logger.info("Attempting to read secret from vault...")
-            val secret = keyValueOperations.get(path, SecretDTO::class.java)?.data
+            val secret = keyValueOperations.get(pathName, SecretDTO::class.java)?.data
             if(Objects.isNull(secret)){
                 throw NullPointerException()
             }
@@ -58,20 +56,19 @@ class VaultService(val vaultOperations: VaultOperations) {
         } catch (e: Exception) {
             logger.error("Some error occurred reading a secret")
         }
-        return BaseResponse(true, "No secret found in $path")
+        return BaseResponse(true, "No secret found in $pathName")
     }
 
     fun deleteSecret(pathName: String) : BaseResponse {
-        val path = "polito/$pathName"
-        val keyValueOperations = vaultOperations.opsForKeyValue(path, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
+        val keyValueOperations = vaultOperations.opsForKeyValue(pathName, VaultKeyValueOperationsSupport.KeyValueBackend.KV_1)
         try {
-            logger.info("Performing secrets delete request for path $path.. ")
-            keyValueOperations.delete(path)
-            logger.info("$path secrets deleted")
+            logger.info("Performing secrets delete request for path $pathName.. ")
+            keyValueOperations.delete(pathName)
+            logger.info("$pathName secrets deleted")
             return BaseResponse(false, "Deleted")
         } catch (e: Exception) {
-            logger.info("Error, $path secrets NOT deleted")
-            return BaseResponse(false, "Error, $path secrets NOT deleted")
+            logger.info("Error, $pathName secrets NOT deleted")
+            return BaseResponse(false, "Error, $pathName secrets NOT deleted")
         }
     }
 
