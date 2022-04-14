@@ -4,6 +4,16 @@ This repository is a little attachment to the Spring Vault set of slides made by
 
 You can freely watch the slides [clicking here](SpringVault.pdf).  
 
+# Getting started
+
+To be able to use this rest service a running Vault server is necessary.
+You can check how to install Vault for CLI from [Vault official documentation](https://learn.hashicorp.com/tutorials/vault/getting-started-install).
+
+To start Vault server you can run:
+```
+$ vault server
+```
+
 # API
 
 - GET `/kv/{pathName}/{id}`:
